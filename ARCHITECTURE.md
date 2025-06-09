@@ -154,15 +154,12 @@ CREATE INDEX idx_pressure_records_measured_at ON pressure_records(measured_at);
 
 ## 通知システム
 
-### 通知の種類
-1. **定時リマインダー**: 設定時刻での点眼通知
-2. **未実施アラート**: 設定時刻から一定時間経過後の再通知
+通知機能の詳細仕様については [SPECIFICATION.md](SPECIFICATION.md#3-リマインダー機能) を参照してください。
 
-### 通知設定
-- 通知時刻（デフォルト: 20:00）
-- 通知ON/OFF
-- スヌーズ間隔（5分、10分、15分）
-- 通知音設定
+### アーキテクチャ上の考慮事項
+- `NotificationService` クラスで通知管理を一元化
+- `flutter_local_notifications` パッケージを使用
+- 設定変更時の通知スケジュール更新
 
 ## セキュリティ考慮事項
 
