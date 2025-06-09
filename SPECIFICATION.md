@@ -53,37 +53,10 @@
 
 ### データ管理
 - **ローカルストレージ**: SQLite（sqflite パッケージ使用）
-- **データ構造**:
-  ```sql
-  -- 点眼記録テーブル
-  CREATE TABLE eyedrop_records (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date TEXT NOT NULL,
-    completed BOOLEAN NOT NULL,
-    timestamp TEXT
-  );
-  
-  -- 眼圧記録テーブル
-  CREATE TABLE pressure_records (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date TEXT NOT NULL,
-    pressure_value REAL NOT NULL,
-    timestamp TEXT NOT NULL
-  );
-  
-  -- 設定テーブル
-  CREATE TABLE settings (
-    key TEXT PRIMARY KEY,
-    value TEXT NOT NULL
-  );
-  ```
+- **詳細なデータベース設計**: [ARCHITECTURE.md](ARCHITECTURE.md#データベース設計) を参照
 
-### 使用パッケージ（予定）
-- `sqflite`: ローカルデータベース
-- `flutter_local_notifications`: プッシュ通知
-- `table_calendar`: カレンダーUI
-- `fl_chart`: グラフ表示
-- `shared_preferences`: 設定保存
+### 使用パッケージ
+詳細な依存関係については [ARCHITECTURE.md](ARCHITECTURE.md#依存関係管理) を参照してください。
 
 ## デザイン仕様
 
@@ -107,17 +80,10 @@
 
 ## 非機能要件
 
-### セキュリティ
-- ログイン機能なし
-- データはローカル保存のみ
-- 外部通信なし
-
-### パフォーマンス
-- アプリ起動時間: 3秒以内
-- 画面遷移: 1秒以内
-- データ保存: 即座に反映
-
 ### ユーザビリティ
 - 片手操作可能なUI
 - 文字サイズ: 最小16sp
 - タップ領域: 最小44dp
+
+### セキュリティ・パフォーマンス
+詳細な技術要件については [ARCHITECTURE.md](ARCHITECTURE.md#セキュリティ考慮事項) を参照してください。
