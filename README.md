@@ -15,15 +15,7 @@ eyedrops-everydayは、緑内障などにより毎日の点眼が必要な患者
 
 ## 技術スタック
 
-- **フレームワーク**: Flutter
-- **プラットフォーム**: Android (主要対象)
-- **データベース**: SQLite (ローカル保存)
-- **状態管理**: Provider
-- **主要パッケージ**: 
-  - sqflite (データベース)
-  - flutter_local_notifications (通知)
-  - table_calendar (カレンダーUI)
-  - fl_chart (グラフ表示)
+詳細な技術仕様については [SPECIFICATION.md](SPECIFICATION.md#技術仕様) を参照してください。
 
 ## デザインコンセプト
 
