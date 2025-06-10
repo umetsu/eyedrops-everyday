@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "PLACEHOLDER_APP_ID",
         "android_client_info": {
-          "package_name": "com.umeg.dev.eyedrops_everyday"
+          "package_name": "jp.umeg.eyedrops_everyday"
         }
       },
       "oauth_client": [],
