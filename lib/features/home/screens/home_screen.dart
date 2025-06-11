@@ -53,17 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DailyStatusCard(
-                        isCompleted: provider.isDateCompleted(DateTime.now()),
-                        date: DateTime.now(),
-                        onTap: () => _toggleTodayStatus(context, provider),
+                      Text(
+                        '点眼カレンダー',
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
-                      const SizedBox(height: 24),
-                Text(
-                  '点眼カレンダー',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -133,64 +127,50 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                if (!AppDateUtils.isSameDay(_selectedDay, DateTime.now())) ...[
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '選択した日付',
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(
-                                provider.isDateCompleted(_selectedDay)
-                                    ? Icons.check_circle
-                                    : Icons.radio_button_unchecked,
-                                color: provider.isDateCompleted(_selectedDay)
-                                    ? AppColors.success
-                                    : AppColors.grey,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                AppDateUtils.formatDisplayDate(_selectedDay),
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            provider.isDateCompleted(_selectedDay) ? '点眼済み' : '未実施',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppDateUtils.isSameDay(_selectedDay, DateTime.now()) 
+                              ? '今日の点眼状況' 
+                              : '選択した日付',
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              provider.isDateCompleted(_selectedDay)
+                                  ? Icons.check_circle
+                                  : Icons.radio_button_unchecked,
                               color: provider.isDateCompleted(_selectedDay)
                                   ? AppColors.success
                                   : AppColors.grey,
+                              size: 24,
                             ),
-                          ),
-                          if (_selectedDay.isBefore(DateTime.now())) ...[
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () => _toggleDateStatus(context, provider, _selectedDay),
-                                child: Text(
-                                  provider.isDateCompleted(_selectedDay)
-                                      ? '点眼を取り消す'
-                                      : '点眼済みにする',
-                                ),
-                              ),
+                            const SizedBox(width: 12),
+                            Text(
+                              AppDateUtils.formatDisplayDate(_selectedDay),
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ],
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          provider.isDateCompleted(_selectedDay) ? '点眼済み' : '未実施',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: provider.isDateCompleted(_selectedDay)
+                                ? AppColors.success
+                                : AppColors.grey,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                      ],
+                ),
                     ],
                   ),
                 ),
@@ -209,8 +189,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: SafeArea(
                   child: QuickActionButton(
-                    isCompleted: provider.isDateCompleted(DateTime.now()),
-                    onPressed: () => _toggleTodayStatus(context, provider),
+                    isCompleted: provider.isDateCompleted(_selectedDay),
+                    onPressed: () => _toggleSelectedDateStatus(context, provider),
                   ),
                 ),
               ),
@@ -221,13 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _toggleTodayStatus(BuildContext context, HomeProvider provider) {
-    final today = AppDateUtils.formatDate(DateTime.now());
-    provider.toggleEyedropStatus(today);
-  }
-
-  void _toggleDateStatus(BuildContext context, HomeProvider provider, DateTime date) {
-    final dateString = AppDateUtils.formatDate(date);
+  void _toggleSelectedDateStatus(BuildContext context, HomeProvider provider) {
+    final dateString = AppDateUtils.formatDate(_selectedDay);
     provider.toggleEyedropStatus(dateString);
   }
 }
