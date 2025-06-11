@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="eyedrops_everyday"
+        android:label="毎日目薬"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,0 +1,64 @@
+name: 🚀 Firebase App Distribution
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build_and_distribute:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📂 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕️ Setup Java (Temurin 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: 🦋 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: 🚀 Cache pub deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: 🔧 Create google-services.json
+        run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
+
+      - name: 📥 Get dependencies
+        run: flutter pub get
+
+      - name: ✅ Run tests
+        run: flutter test
+
+      - name: 🏗️ Build APK
+        run: flutter build apk --release
+
+      - name: 🚀 Distribute to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+          file: build/app/outputs/flutter-apk/app-release.apk
+          releaseNotes: |
+            毎日目薬アプリ - 自動ビルド版
+            
+            ビルド情報:
+            - ブランチ: ${{ github.ref_name }}
+            - コミット: ${{ github.sha }}
+            - 実行者: ${{ github.actor }}
+            
+            注意: テスターグループは後でFirebase Consoleで設定してください

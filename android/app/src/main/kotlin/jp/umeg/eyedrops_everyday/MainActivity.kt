@@ -1,4 +1,4 @@
-package com.example.eyedrops_everyday
+package jp.umeg.eyedrops_everyday
 
 import io.flutter.embedding.android.FlutterActivity
 
