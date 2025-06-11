@@ -20,7 +20,8 @@ void main() {
   testWidgets('毎日目薬アプリの基本表示テスト', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
     
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text('点眼履歴'), findsOneWidget);
   });
@@ -28,7 +29,8 @@ void main() {
   testWidgets('画面内のUI要素が正しく表示されるテスト', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
     
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text('点眼カレンダー'), findsOneWidget);
     expect(find.byType(TableCalendar), findsOneWidget);
@@ -44,7 +46,8 @@ void main() {
   testWidgets('点眼状態の切り替え機能テスト', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
     
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);
@@ -53,13 +56,15 @@ void main() {
     expect(actionButton, findsOneWidget);
     
     await tester.tap(actionButton);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
 
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
     expect(find.text('点眼済み'), findsOneWidget);
 
     await tester.tap(actionButton);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);
@@ -68,7 +73,8 @@ void main() {
   testWidgets('カレンダーの日付選択機能テスト', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
     
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byType(TableCalendar), findsOneWidget);
 
