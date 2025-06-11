@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/utils/date_utils.dart';
+import '../../../core/database/models/eyedrop_record.dart';
 import '../providers/home_provider.dart';
 import '../widgets/daily_status_card.dart';
 import '../widgets/quick_action_button.dart';
