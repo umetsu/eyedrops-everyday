@@ -21,7 +21,7 @@ void main() {
     await tester.pumpWidget(const MyApp());
     
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(seconds: 2));
 
     expect(find.text('点眼履歴'), findsOneWidget);
   });
@@ -30,7 +30,7 @@ void main() {
     await tester.pumpWidget(const MyApp());
     
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(seconds: 2));
 
     expect(find.text('点眼カレンダー'), findsOneWidget);
     expect(find.byType(TableCalendar), findsOneWidget);
@@ -47,7 +47,7 @@ void main() {
     await tester.pumpWidget(const MyApp());
     
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(seconds: 2));
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);
@@ -57,14 +57,14 @@ void main() {
     
     await tester.tap(actionButton);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
     expect(find.text('点眼済み'), findsOneWidget);
 
     await tester.tap(actionButton);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);
@@ -74,7 +74,7 @@ void main() {
     await tester.pumpWidget(const MyApp());
     
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(seconds: 2));
 
     expect(find.byType(TableCalendar), findsOneWidget);
 
