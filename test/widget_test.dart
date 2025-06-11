@@ -1,9 +1,9 @@
-// This is a basic Flutter widget test.
+// 毎日目薬アプリのウィジェットテスト
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// WidgetTesterを使用してウィジェットとのインタラクションをテストします。
+// タップやスクロールジェスチャーを送信したり、ウィジェットツリー内の
+// 子ウィジェットを見つけたり、テキストを読み取ったり、
+// ウィジェットプロパティの値が正しいことを確認できます。
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,20 +11,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:eyedrops_everyday/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('毎日目薬アプリの基本表示テスト', (WidgetTester tester) async {
+    // アプリをビルドしてフレームをトリガー
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // アプリタイトルが表示されることを確認
+    expect(find.text('Eyedrops Everyday'), findsOneWidget);
+    
+    // ウェルカムメッセージが表示されることを確認
+    expect(find.text('Welcome to Eyedrops Everyday!'), findsOneWidget);
+    
+    // 初期設定メッセージが表示されることを確認
+    expect(find.text('This is a sample screen for Flutter initial setup.'), findsOneWidget);
+    
+    // 動作確認メッセージが表示されることを確認
+    expect(find.text('Flutter project is working correctly!'), findsOneWidget);
   });
 }
