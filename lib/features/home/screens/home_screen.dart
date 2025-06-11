@@ -45,22 +45,20 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DailyStatusCard(
-                  isCompleted: provider.isDateCompleted(DateTime.now()),
-                  date: DateTime.now(),
-                  onTap: () => _toggleTodayStatus(context, provider),
-                ),
-                const SizedBox(height: 16),
-                QuickActionButton(
-                  isCompleted: provider.isDateCompleted(DateTime.now()),
-                  onPressed: () => _toggleTodayStatus(context, provider),
-                ),
-                const SizedBox(height: 24),
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DailyStatusCard(
+                        isCompleted: provider.isDateCompleted(DateTime.now()),
+                        date: DateTime.now(),
+                        onTap: () => _toggleTodayStatus(context, provider),
+                      ),
+                      const SizedBox(height: 24),
                 Text(
                   '点眼カレンダー',
                   style: Theme.of(context).textTheme.headlineMedium,
@@ -78,6 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       calendarFormat: CalendarFormat.month,
                       startingDayOfWeek: StartingDayOfWeek.sunday,
+                      locale: 'ja_JP',
+                      daysOfWeekStyle: const DaysOfWeekStyle(
+                        weekdayStyle: TextStyle(fontWeight: FontWeight.w600),
+                        weekendStyle: TextStyle(fontWeight: FontWeight.w600, color: Colors.red),
+                      ),
                       headerStyle: const HeaderStyle(
                         formatButtonVisible: false,
                         titleCentered: true,
@@ -187,9 +190,31 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                ],
-              ],
-            ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  child: QuickActionButton(
+                    isCompleted: provider.isDateCompleted(DateTime.now()),
+                    onPressed: () => _toggleTodayStatus(context, provider),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),
