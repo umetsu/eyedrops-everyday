@@ -52,7 +52,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
-          groups: testers
           file: build/app/outputs/flutter-apk/app-release.apk
           releaseNotes: |
             毎日目薬アプリ - 自動ビルド版
@@ -61,3 +60,5 @@ jobs:
             - ブランチ: ${{ github.ref_name }}
             - コミット: ${{ github.sha }}
             - 実行者: ${{ github.actor }}
+            
+            注意: テスターグループは後でFirebase Consoleで設定してください
