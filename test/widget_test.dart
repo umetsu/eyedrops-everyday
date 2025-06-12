@@ -33,6 +33,7 @@ void main() {
 
   testWidgets('画面内のUI要素が正しく表示されるテスト', (WidgetTester tester) async {
     final provider = HomeProvider();
+    provider.setTestMode();
     
     await tester.pumpWidget(
       MultiProvider(
@@ -54,9 +55,7 @@ void main() {
       ),
     );
     
-    provider.setTestMode();
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('点眼履歴'), findsOneWidget);
     expect(find.text('点眼カレンダー'), findsOneWidget);
@@ -95,7 +94,6 @@ void main() {
     );
     
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);
@@ -104,13 +102,13 @@ void main() {
     expect(actionButton, findsOneWidget);
     
     await tester.tap(actionButton);
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump();
 
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
     expect(find.text('点眼済み'), findsOneWidget);
 
     await tester.tap(actionButton);
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump();
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);
@@ -141,10 +139,8 @@ void main() {
     );
     
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byType(TableCalendar), findsOneWidget);
     expect(find.text('今日の点眼状況'), findsOneWidget);
-    expect(find.byType(TableCalendar), findsOneWidget);
   });
 }
