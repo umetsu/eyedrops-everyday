@@ -1,16 +1,14 @@
-name: 🚀 Firebase App Distribution
+name: 🚀 CD - ビルド・デプロイ
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 permissions:
   contents: read
 
 jobs:
-  build_and_distribute:
+  build_and_deploy:
     runs-on: ubuntu-latest
     
     steps:
@@ -40,9 +38,6 @@ jobs:
 
       - name: 📥 Get dependencies
         run: flutter pub get
-
-      - name: ✅ Run tests
-        run: flutter test
 
       - name: 🏗️ Build APK
         run: flutter build apk --release
