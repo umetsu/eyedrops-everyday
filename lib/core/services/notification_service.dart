@@ -54,7 +54,7 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
+        ?.requestPermission();
   }
 
   void _onNotificationTap(NotificationResponse response) {
