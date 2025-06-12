@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'models/eyedrop_record.dart';
+import 'models/app_settings.dart';
 
 class DatabaseHelper {
   static Database? _database;
@@ -8,6 +9,7 @@ class DatabaseHelper {
   static const int _databaseVersion = 1;
 
   static const String _tableEyedropRecords = 'eyedrop_records';
+  static const String _tableAppSettings = 'app_settings';
 
   static Future<Database> get database async {
     if (_database != null) return _database!;
@@ -32,6 +34,14 @@ class DatabaseHelper {
         completed BOOLEAN NOT NULL DEFAULT 0,
         completed_at TEXT,
         created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE $_tableAppSettings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )
     ''');
@@ -101,5 +111,46 @@ class DatabaseHelper {
     return List.generate(maps.length, (i) {
       return EyedropRecord.fromMap(maps[i]);
     });
+  }
+
+  Future<int> insertAppSetting(AppSettings setting) async {
+    final db = await database;
+    return await db.insert(
+      _tableAppSettings,
+      setting.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<AppSettings?> getAppSetting(String key) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _tableAppSettings,
+      where: 'key = ?',
+      whereArgs: [key],
+    );
+    if (maps.isNotEmpty) {
+      return AppSettings.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  Future<int> updateAppSetting(AppSettings setting) async {
+    final db = await database;
+    return await db.update(
+      _tableAppSettings,
+      setting.toMap(),
+      where: 'key = ?',
+      whereArgs: [setting.key],
+    );
+  }
+
+  Future<int> deleteAppSetting(String key) async {
+    final db = await database;
+    return await db.delete(
+      _tableAppSettings,
+      where: 'key = ?',
+      whereArgs: [key],
+    );
   }
 }
