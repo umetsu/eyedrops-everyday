@@ -26,16 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
     _selectedDay = DateTime.now();
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_isTestEnvironment()) {
-        context.read<HomeProvider>().loadRecords();
-      } else {
-        context.read<HomeProvider>().setTestMode();
+      final provider = context.read<HomeProvider>();
+      if (provider.isLoading) {
+        provider.loadRecords();
       }
     });
-  }
-
-  bool _isTestEnvironment() {
-    return const bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
   }
 
   @override
