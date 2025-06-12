@@ -148,7 +148,6 @@ class HomeProvider extends ChangeNotifier {
       _records.add(newRecord);
     }
     
-    _notificationService.updateNotificationSchedule();
     notifyListeners();
   }
 }
