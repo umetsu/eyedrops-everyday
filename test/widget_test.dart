@@ -5,25 +5,133 @@
 // 子ウィジェットを見つけたり、テキストを読み取ったり、
 // ウィジェットプロパティの値が正しいことを確認できます。
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:eyedrops_everyday/main.dart';
+import 'package:eyedrops_everyday/features/home/providers/home_provider.dart';
+import 'package:eyedrops_everyday/features/home/screens/home_screen.dart';
+import 'package:eyedrops_everyday/features/home/widgets/quick_action_button.dart';
+import 'package:eyedrops_everyday/shared/themes/app_theme.dart';
 
 void main() {
-  testWidgets('毎日目薬アプリの基本表示テスト', (WidgetTester tester) async {
-    // アプリをビルドしてフレームをトリガー
-    await tester.pumpWidget(const MyApp());
+  setUpAll(() {
+    databaseFactory = databaseFactoryFfi;
+  });
 
-    // アプリタイトルが表示されることを確認
-    expect(find.text('Eyedrops Everyday'), findsOneWidget);
+  testWidgets('毎日目薬アプリの基本表示テスト', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
     
-    // ウェルカムメッセージが表示されることを確認
-    expect(find.text('Welcome to Eyedrops Everyday!'), findsOneWidget);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 2));
+
+    expect(find.text('点眼履歴'), findsOneWidget);
+  });
+
+  testWidgets('画面内のUI要素が正しく表示されるテスト', (WidgetTester tester) async {
+    final provider = HomeProvider();
+    provider.setTestMode();
     
-    // 初期設定メッセージが表示されることを確認
-    expect(find.text('This is a sample screen for Flutter initial setup.'), findsOneWidget);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ja', 'JP'),
+          ],
+          theme: AppTheme.lightTheme,
+          home: const HomeScreen(),
+        ),
+      ),
+    );
     
-    // 動作確認メッセージが表示されることを確認
-    expect(find.text('Flutter project is working correctly!'), findsOneWidget);
+    await tester.pumpAndSettle();
+
+    expect(find.text('点眼履歴'), findsOneWidget);
+    expect(find.text('点眼カレンダー'), findsOneWidget);
+
+    expect(find.text('今日の点眼状況'), findsOneWidget);
+    expect(find.byType(Card), findsWidgets);
+
+    expect(find.byType(QuickActionButton), findsOneWidget);
+
+    expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
+  });
+
+  testWidgets('点眼状態の切り替え機能テスト', (WidgetTester tester) async {
+    final provider = HomeProvider();
+    provider.setTestMode();
+    
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ja', 'JP'),
+          ],
+          theme: AppTheme.lightTheme,
+          home: const HomeScreen(),
+        ),
+      ),
+    );
+    
+    await tester.pump();
+
+    expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
+
+    final actionButton = find.byType(QuickActionButton);
+    expect(actionButton, findsOneWidget);
+    
+    await tester.tap(actionButton);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.byIcon(Icons.check_circle), findsOneWidget);
+  });
+
+  testWidgets('カレンダーの日付選択機能テスト', (WidgetTester tester) async {
+    final provider = HomeProvider();
+    provider.setTestMode();
+    
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ja', 'JP'),
+          ],
+          theme: AppTheme.lightTheme,
+          home: const HomeScreen(),
+        ),
+      ),
+    );
+    
+    await tester.pump();
+    
+    expect(find.text('点眼カレンダー'), findsOneWidget);
   });
 }
