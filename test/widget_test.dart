@@ -15,6 +15,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:eyedrops_everyday/main.dart';
 import 'package:eyedrops_everyday/features/home/providers/home_provider.dart';
 import 'package:eyedrops_everyday/features/home/screens/home_screen.dart';
+import 'package:eyedrops_everyday/features/home/widgets/quick_action_button.dart';
 import 'package:eyedrops_everyday/shared/themes/app_theme.dart';
 
 void main() {
@@ -63,7 +64,7 @@ void main() {
     expect(find.text('今日の点眼状況'), findsOneWidget);
     expect(find.byType(Card), findsWidgets);
 
-    expect(find.byType(ElevatedButton), findsOneWidget);
+    expect(find.byType(QuickActionButton), findsOneWidget);
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
   });
