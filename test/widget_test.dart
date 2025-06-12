@@ -98,7 +98,7 @@ void main() {
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);
 
-    final actionButton = find.byType(ElevatedButton);
+    final actionButton = find.byType(QuickActionButton);
     expect(actionButton, findsOneWidget);
     
     await tester.tap(actionButton);
