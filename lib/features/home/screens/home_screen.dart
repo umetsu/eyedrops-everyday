@@ -42,11 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Consumer<HomeProvider>(
         builder: (context, provider, child) {
+          print('DEBUG: HomeScreen Consumer builder - isLoading: ${provider.isLoading}');
           if (provider.isLoading) {
+            print('DEBUG: HomeScreen showing CircularProgressIndicator');
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
+          print('DEBUG: HomeScreen showing main content');
 
           return Column(
             children: [

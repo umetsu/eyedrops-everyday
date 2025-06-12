@@ -113,8 +113,11 @@ class HomeProvider extends ChangeNotifier {
   }
 
   void setTestMode() {
+    print('DEBUG: setTestMode() called');
     _isLoading = false;
     _records = [];
+    print('DEBUG: setTestMode() - isLoading: $_isLoading, records count: ${_records.length}');
     notifyListeners();
+    print('DEBUG: setTestMode() - notifyListeners() called');
   }
 }
