@@ -49,6 +49,7 @@ class HomeProvider extends ChangeNotifier {
       _records = await _databaseHelper.getEyedropRecords();
     } catch (e) {
       debugPrint('レコード読み込みエラー: $e');
+      _records = [];
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -108,6 +109,12 @@ class HomeProvider extends ChangeNotifier {
 
   void setSelectedDate(DateTime date) {
     _selectedDate = date;
+    notifyListeners();
+  }
+
+  void setTestMode() {
+    _isLoading = false;
+    _records = [];
     notifyListeners();
   }
 }

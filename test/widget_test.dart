@@ -5,11 +5,17 @@
 // 子ウィジェットを見つけたり、テキストを読み取ったり、
 // ウィジェットプロパティの値が正しいことを確認できます。
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:eyedrops_everyday/main.dart';
+import 'package:eyedrops_everyday/features/home/providers/home_provider.dart';
+import 'package:eyedrops_everyday/features/home/screens/home_screen.dart';
+import 'package:eyedrops_everyday/shared/themes/app_theme.dart';
 
 void main() {
   setUpAll(() {
@@ -26,11 +32,33 @@ void main() {
   });
 
   testWidgets('画面内のUI要素が正しく表示されるテスト', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    final provider = HomeProvider();
+    provider.setTestMode();
+    
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ja', 'JP'),
+          ],
+          theme: AppTheme.lightTheme,
+          home: const HomeScreen(),
+        ),
+      ),
+    );
     
     await tester.pump();
-    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(milliseconds: 100));
 
+    expect(find.text('点眼履歴'), findsOneWidget);
     expect(find.text('点眼カレンダー'), findsOneWidget);
     expect(find.byType(TableCalendar), findsOneWidget);
 
@@ -43,10 +71,31 @@ void main() {
   });
 
   testWidgets('点眼状態の切り替え機能テスト', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    final provider = HomeProvider();
+    provider.setTestMode();
+    
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ja', 'JP'),
+          ],
+          theme: AppTheme.lightTheme,
+          home: const HomeScreen(),
+        ),
+      ),
+    );
     
     await tester.pump();
-    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);
@@ -55,33 +104,47 @@ void main() {
     expect(actionButton, findsOneWidget);
     
     await tester.tap(actionButton);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
     expect(find.text('点眼済み'), findsOneWidget);
 
     await tester.tap(actionButton);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);
   });
 
   testWidgets('カレンダーの日付選択機能テスト', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    final provider = HomeProvider();
+    provider.setTestMode();
+    
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ja', 'JP'),
+          ],
+          theme: AppTheme.lightTheme,
+          home: const HomeScreen(),
+        ),
+      ),
+    );
     
     await tester.pump();
-    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byType(TableCalendar), findsOneWidget);
-
     expect(find.text('今日の点眼状況'), findsOneWidget);
-
-    final calendar = find.byType(TableCalendar);
-    expect(calendar, findsOneWidget);
-    
     expect(find.byType(TableCalendar), findsOneWidget);
   });
 }
