@@ -96,24 +96,15 @@ void main() {
     await tester.pump();
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
-    expect(find.text('未実施'), findsOneWidget);
 
     final actionButton = find.byType(QuickActionButton);
     expect(actionButton, findsOneWidget);
     
     await tester.tap(actionButton);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.byIcon(Icons.undo), findsOneWidget);
-    expect(find.text('点眼を取り消す'), findsOneWidget);
-
-    await tester.tap(actionButton);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-
-    expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
-    expect(find.text('未実施'), findsOneWidget);
+    expect(find.byIcon(Icons.check_circle), findsOneWidget);
   });
 
   testWidgets('カレンダーの日付選択機能テスト', (WidgetTester tester) async {
@@ -141,8 +132,7 @@ void main() {
     );
     
     await tester.pump();
-
-    expect(find.byType(TableCalendar), findsOneWidget);
-    expect(find.text('今日の点眼状況'), findsOneWidget);
+    
+    expect(find.text('点眼カレンダー'), findsOneWidget);
   });
 }

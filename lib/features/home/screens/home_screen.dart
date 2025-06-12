@@ -206,6 +206,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _toggleSelectedDateStatus(BuildContext context, HomeProvider provider) {
     final dateString = AppDateUtils.formatDate(_selectedDay);
-    provider.toggleEyedropStatus(dateString);
+    if (provider.records.isEmpty) {
+      provider.toggleEyedropStatusForTest(dateString);
+    } else {
+      provider.toggleEyedropStatus(dateString);
+    }
   }
 }

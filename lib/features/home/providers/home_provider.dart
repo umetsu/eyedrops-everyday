@@ -29,16 +29,14 @@ class HomeProvider extends ChangeNotifier {
 
   bool isDateCompleted(DateTime date) {
     final dateString = AppDateUtils.formatDate(date);
-    final record = _records.firstWhere(
-      (record) => record.date == dateString,
-      orElse: () => EyedropRecord(
-        date: dateString,
-        completed: false,
-        createdAt: AppDateUtils.formatDateTime(DateTime.now()),
-        updatedAt: AppDateUtils.formatDateTime(DateTime.now()),
-      ),
-    );
-    return record.completed;
+    try {
+      final record = _records.firstWhere(
+        (record) => record.date == dateString,
+      );
+      return record.completed;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<void> loadRecords() async {
@@ -116,6 +114,11 @@ class HomeProvider extends ChangeNotifier {
     _isLoading = false;
     _records = [];
     _selectedDate = DateTime.now();
+    notifyListeners();
+  }
+
+  void forceNotLoading() {
+    _isLoading = false;
     notifyListeners();
   }
 
