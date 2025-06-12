@@ -103,12 +103,14 @@ void main() {
     
     await tester.tap(actionButton);
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.byIcon(Icons.check_circle), findsOneWidget);
-    expect(find.text('点眼済み'), findsOneWidget);
+    expect(find.byIcon(Icons.undo), findsOneWidget);
+    expect(find.text('点眼を取り消す'), findsOneWidget);
 
     await tester.tap(actionButton);
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
     expect(find.text('未実施'), findsOneWidget);

@@ -115,6 +115,33 @@ class HomeProvider extends ChangeNotifier {
   void setTestMode() {
     _isLoading = false;
     _records = [];
+    _selectedDate = DateTime.now();
+    notifyListeners();
+  }
+
+  Future<void> toggleEyedropStatusForTest(String date) async {
+    final existingRecordIndex = _records.indexWhere((record) => record.date == date);
+    final now = DateTime.now();
+    
+    if (existingRecordIndex != -1) {
+      final existingRecord = _records[existingRecordIndex];
+      final updatedRecord = existingRecord.copyWith(
+        completed: !existingRecord.completed,
+        completedAt: !existingRecord.completed ? AppDateUtils.formatDateTime(now) : null,
+        updatedAt: AppDateUtils.formatDateTime(now),
+      );
+      _records[existingRecordIndex] = updatedRecord;
+    } else {
+      final newRecord = EyedropRecord(
+        date: date,
+        completed: true,
+        completedAt: AppDateUtils.formatDateTime(now),
+        createdAt: AppDateUtils.formatDateTime(now),
+        updatedAt: AppDateUtils.formatDateTime(now),
+      );
+      _records.add(newRecord);
+    }
+    
     notifyListeners();
   }
 }
