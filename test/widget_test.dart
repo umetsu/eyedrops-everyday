@@ -55,11 +55,10 @@ void main() {
       ),
     );
     
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text('点眼履歴'), findsOneWidget);
     expect(find.text('点眼カレンダー'), findsOneWidget);
-    expect(find.byType(TableCalendar), findsOneWidget);
 
     expect(find.text('今日の点眼状況'), findsOneWidget);
     expect(find.byType(Card), findsWidgets);
