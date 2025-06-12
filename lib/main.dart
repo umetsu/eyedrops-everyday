@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'shared/themes/app_theme.dart';
 import 'features/home/providers/home_provider.dart';
+import 'features/settings/providers/settings_provider.dart';
 import 'features/home/screens/home_screen.dart';
+import 'core/services/notification_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  tz.initializeTimeZones();
+  await NotificationService().initialize();
+  await NotificationService().updateNotificationSchedule();
+  
   runApp(const MyApp());
 }
 
@@ -17,6 +26,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
       child: MaterialApp(
         title: 'Eyedrops Everyday',

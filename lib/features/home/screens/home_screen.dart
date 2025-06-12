@@ -6,6 +6,7 @@ import '../../../core/utils/date_utils.dart';
 import '../../../core/database/models/eyedrop_record.dart';
 import '../providers/home_provider.dart';
 import '../widgets/quick_action_button.dart';
+import '../../settings/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,6 +39,18 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('点眼履歴'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Consumer<HomeProvider>(
         builder: (context, provider, child) {

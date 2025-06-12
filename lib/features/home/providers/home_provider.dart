@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../core/database/database_helper.dart';
 import '../../../core/database/models/eyedrop_record.dart';
 import '../../../core/utils/date_utils.dart';
+import '../../../core/services/notification_service.dart';
 
 class HomeProvider extends ChangeNotifier {
   final DatabaseHelper _databaseHelper = DatabaseHelper();
+  final NotificationService _notificationService = NotificationService();
   
   List<EyedropRecord> _records = [];
   DateTime _selectedDate = DateTime.now();
@@ -99,6 +101,7 @@ class HomeProvider extends ChangeNotifier {
         _records.add(newRecord);
       }
       
+      await _notificationService.updateNotificationSchedule();
       notifyListeners();
     } catch (e) {
       debugPrint('点眼状態切替エラー: $e');
@@ -145,6 +148,7 @@ class HomeProvider extends ChangeNotifier {
       _records.add(newRecord);
     }
     
+    _notificationService.updateNotificationSchedule();
     notifyListeners();
   }
 }
