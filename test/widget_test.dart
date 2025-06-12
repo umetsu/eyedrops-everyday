@@ -5,7 +5,6 @@
 // 子ウィジェットを見つけたり、テキストを読み取ったり、
 // ウィジェットプロパティの値が正しいことを確認できます。
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:eyedrops_everyday/main.dart';
