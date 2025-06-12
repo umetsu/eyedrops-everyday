@@ -33,7 +33,6 @@ void main() {
 
   testWidgets('画面内のUI要素が正しく表示されるテスト', (WidgetTester tester) async {
     final provider = HomeProvider();
-    provider.setTestMode();
     
     await tester.pumpWidget(
       MultiProvider(
@@ -55,8 +54,9 @@ void main() {
       ),
     );
     
+    provider.setTestMode();
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('点眼履歴'), findsOneWidget);
     expect(find.text('点眼カレンダー'), findsOneWidget);
