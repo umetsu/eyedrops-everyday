@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<String> _titles = [
     '点眼履歴',
-    '眼圧履歴',
+    '眼圧',
   ];
 
   @override
@@ -73,17 +73,16 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildFloatingActionButton() {
     if (_currentIndex == 0) {
-      return FloatingActionButton.extended(
+      return FloatingActionButton(
         onPressed: () {
           _toggleEyedropStatus();
         },
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        icon: const Icon(Icons.check),
-        label: const Text('点眼完了'),
+        child: const Icon(Icons.check),
       );
     } else {
-      return FloatingActionButton.extended(
+      return FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
@@ -94,8 +93,7 @@ class _MainScreenState extends State<MainScreen> {
         },
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        icon: const Icon(Icons.add),
-        label: const Text('眼圧登録'),
+        child: const Icon(Icons.add),
       );
     }
   }
@@ -105,6 +103,8 @@ class _MainScreenState extends State<MainScreen> {
     final today = DateTime.now();
     final dateString = today.toIso8601String().split('T')[0];
     
+    final wasCompleted = homeProvider.isDateCompleted(today);
+    
     if (homeProvider.records.isEmpty) {
       homeProvider.toggleEyedropStatusForTest(dateString);
     } else {
@@ -113,7 +113,7 @@ class _MainScreenState extends State<MainScreen> {
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(homeProvider.isDateCompleted(today) ? '点眼を記録しました' : '点眼記録を取り消しました'),
+        content: Text(!wasCompleted ? '点眼を記録しました' : '点眼記録を取り消しました'),
         backgroundColor: AppColors.success,
       ),
     );

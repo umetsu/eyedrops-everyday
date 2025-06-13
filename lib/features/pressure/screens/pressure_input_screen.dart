@@ -21,6 +21,12 @@ class _PressureInputScreenState extends State<PressureInputScreen> {
   bool _isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadExistingData();
+  }
+
+  @override
   void dispose() {
     _leftPressureController.dispose();
     _rightPressureController.dispose();
@@ -215,6 +221,7 @@ class _PressureInputScreenState extends State<PressureInputScreen> {
       setState(() {
         _selectedDate = picked;
       });
+      _loadExistingData();
     }
   }
 
@@ -275,5 +282,22 @@ class _PressureInputScreenState extends State<PressureInputScreen> {
         });
       }
     }
+  }
+
+  Future<void> _loadExistingData() async {
+    final provider = context.read<PressureProvider>();
+    final dateString = AppDateUtils.formatDate(_selectedDate);
+    
+    final leftRecord = provider.records
+        .where((record) => record.date == dateString && record.eyeType == 'left')
+        .firstOrNull;
+    final rightRecord = provider.records
+        .where((record) => record.date == dateString && record.eyeType == 'right')
+        .firstOrNull;
+    
+    setState(() {
+      _leftPressureController.text = leftRecord?.pressureValue.toString() ?? '';
+      _rightPressureController.text = rightRecord?.pressureValue.toString() ?? '';
+    });
   }
 }
