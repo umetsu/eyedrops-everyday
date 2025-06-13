@@ -26,7 +26,7 @@ if (flutterVersionName == null) {
 android {
     namespace "jp.umeg.eyedrops_everyday"
     compileSdk 35
-    ndkVersion flutter.ndkVersion
+    ndkVersion "27.0.12077973"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
@@ -69,5 +69,5 @@ flutter {
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.0.0')
     implementation 'com.google.firebase:firebase-analytics'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 }
