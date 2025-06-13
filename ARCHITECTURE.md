@@ -207,7 +207,7 @@ dependencies:
     sdk: flutter
   provider: ^6.0.5           # 状態管理
   sqflite: ^2.3.0           # ローカルデータベース
-  flutter_local_notifications: ^16.3.0  # プッシュ通知
+  flutter_local_notifications: ^19.2.1  # プッシュ通知
   table_calendar: ^3.0.9    # カレンダーUI
   fl_chart: ^0.66.0         # グラフ表示
   shared_preferences: ^2.2.2  # 設定保存
