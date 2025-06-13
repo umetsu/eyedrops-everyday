@@ -9,6 +9,7 @@ class PressureProvider extends ChangeNotifier {
   List<PressureRecord> _records = [];
   bool _isLoading = false;
   String _selectedPeriod = '1ヶ月';
+  bool _testMode = false;
 
   List<PressureRecord> get records => _records;
   bool get isLoading => _isLoading;
@@ -33,6 +34,12 @@ class PressureProvider extends ChangeNotifier {
 
   Future<void> loadRecordsForPeriod(String period) async {
     _selectedPeriod = period;
+    
+    // Skip database operations in test mode
+    if (_testMode) {
+      return;
+    }
+    
     _isLoading = true;
     notifyListeners();
 
@@ -115,5 +122,13 @@ class PressureProvider extends ChangeNotifier {
 
   List<PressureRecord> getRecordsForEye(String eyeType) {
     return _records.where((record) => record.eyeType == eyeType).toList();
+  }
+
+  void setTestMode() {
+    _testMode = true;
+    _isLoading = false;
+    _records = [];
+    _selectedPeriod = '1ヶ月';
+    notifyListeners();
   }
 }
