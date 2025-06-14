@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../core/database/models/eyedrop_record.dart';
@@ -70,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           daysOfWeekStyle: const DaysOfWeekStyle(
                             weekdayStyle: TextStyle(fontWeight: FontWeight.w600),
                             weekendStyle: TextStyle(fontWeight: FontWeight.w600, color: Colors.red),
+                            decoration: BoxDecoration(),
                           ),
                           headerStyle: const HeaderStyle(
                             formatButtonVisible: false,
@@ -119,6 +121,23 @@ class _HomeScreenState extends State<HomeScreen> {
                             });
                             provider.loadRecordsForMonth(focusedDay);
                           },
+                          calendarBuilders: CalendarBuilders(
+                            dowBuilder: (context, day) {
+                              final text = DateFormat.E('ja_JP').format(day);
+                              if (day.weekday == DateTime.saturday) {
+                                return Center(
+                                  child: Text(
+                                    text,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.saturday,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return null;
+                            },
+                          ),
                         ),
                       ),
                     ),

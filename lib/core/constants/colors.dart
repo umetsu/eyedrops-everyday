@@ -9,4 +9,5 @@ class AppColors {
   static const Color success = Color(0xFF4CAF50);
   static const Color error = Color(0xFFE57373);
   static const Color grey = Color(0xFF9E9E9E);
+  static const Color saturday = Color(0xFF2196F3);
 }
