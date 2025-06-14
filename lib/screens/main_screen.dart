@@ -67,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       floatingActionButton: _buildFloatingActionButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
