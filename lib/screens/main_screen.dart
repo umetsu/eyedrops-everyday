@@ -105,7 +105,7 @@ class _MainScreenState extends State<MainScreen> {
     
     final wasCompleted = homeProvider.isDateCompleted(selectedDate);
     
-    if (homeProvider.records.isEmpty) {
+    if (homeProvider.isTestMode) {
       homeProvider.toggleEyedropStatusForTest(dateString);
     } else {
       homeProvider.toggleEyedropStatus(dateString);
