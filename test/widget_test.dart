@@ -147,4 +147,123 @@ void main() {
     
     expect(find.text('点眼カレンダー'), findsOneWidget);
   });
+
+  testWidgets('選択した日付に対する点眼状態切り替えテスト（デグレード防止）', (WidgetTester tester) async {
+    final homeProvider = HomeProvider();
+    homeProvider.setTestMode();
+    final pressureProvider = PressureProvider();
+    pressureProvider.setTestMode();
+    
+    // 昨日の日付を設定（今日以外の日付をテスト）
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    homeProvider.setSelectedDate(yesterday);
+    
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: homeProvider),
+          ChangeNotifierProvider.value(value: pressureProvider),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ja', 'JP'),
+          ],
+          theme: AppTheme.lightTheme,
+          home: const MainScreen(),
+        ),
+      ),
+    );
+    
+    await tester.pump();
+
+    // 初期状態では昨日の点眼は未完了
+    expect(homeProvider.isDateCompleted(yesterday), false);
+    expect(homeProvider.isDateCompleted(DateTime.now()), false);
+
+    // FloatingActionButtonをタップして点眼状態を切り替え
+    final actionButton = find.byType(FloatingActionButton);
+    expect(actionButton, findsOneWidget);
+    
+    await tester.tap(actionButton);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // 昨日の日付の点眼状態が変更されていることを確認
+    expect(homeProvider.isDateCompleted(yesterday), true);
+    // 今日の日付は変更されていないことを確認（重要：デグレード防止）
+    expect(homeProvider.isDateCompleted(DateTime.now()), false);
+  });
+
+  testWidgets('異なる日付選択時の点眼状態独立性テスト', (WidgetTester tester) async {
+    final homeProvider = HomeProvider();
+    homeProvider.setTestMode();
+    final pressureProvider = PressureProvider();
+    pressureProvider.setTestMode();
+    
+    final today = DateTime.now();
+    final yesterday = today.subtract(const Duration(days: 1));
+    final twoDaysAgo = today.subtract(const Duration(days: 2));
+    
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: homeProvider),
+          ChangeNotifierProvider.value(value: pressureProvider),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ja', 'JP'),
+          ],
+          theme: AppTheme.lightTheme,
+          home: const MainScreen(),
+        ),
+      ),
+    );
+    
+    await tester.pump();
+
+    // 昨日を選択して点眼状態を切り替え
+    homeProvider.setSelectedDate(yesterday);
+    await tester.pump();
+    
+    final actionButton = find.byType(FloatingActionButton);
+    await tester.tap(actionButton);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // 昨日のみ完了状態になっていることを確認
+    expect(homeProvider.isDateCompleted(yesterday), true);
+    expect(homeProvider.isDateCompleted(today), false);
+    expect(homeProvider.isDateCompleted(twoDaysAgo), false);
+
+    // 2日前を選択して点眼状態を切り替え
+    homeProvider.setSelectedDate(twoDaysAgo);
+    await tester.pump();
+    
+    await tester.tap(actionButton);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // 昨日と2日前が完了状態、今日は未完了のまま
+    expect(homeProvider.isDateCompleted(yesterday), true);
+    expect(homeProvider.isDateCompleted(twoDaysAgo), true);
+    expect(homeProvider.isDateCompleted(today), false);
+
+    // 今日を選択して状態確認
+    homeProvider.setSelectedDate(today);
+    await tester.pump();
+    
+    // 今日は依然として未完了状態であることを確認
+    expect(homeProvider.isDateCompleted(today), false);
+  });
 }

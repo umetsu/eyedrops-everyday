@@ -100,12 +100,12 @@ class _MainScreenState extends State<MainScreen> {
 
   void _toggleEyedropStatus() {
     final homeProvider = context.read<HomeProvider>();
-    final today = DateTime.now();
-    final dateString = today.toIso8601String().split('T')[0];
+    final selectedDate = homeProvider.selectedDate;
+    final dateString = selectedDate.toIso8601String().split('T')[0];
     
-    final wasCompleted = homeProvider.isDateCompleted(today);
+    final wasCompleted = homeProvider.isDateCompleted(selectedDate);
     
-    if (homeProvider.records.isEmpty) {
+    if (homeProvider.isTestMode) {
       homeProvider.toggleEyedropStatusForTest(dateString);
     } else {
       homeProvider.toggleEyedropStatus(dateString);

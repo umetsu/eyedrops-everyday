@@ -10,10 +10,12 @@ class HomeProvider extends ChangeNotifier {
   List<EyedropRecord> _records = [];
   DateTime _selectedDate = DateTime.now();
   bool _isLoading = false;
+  bool _isTestMode = false;
 
   List<EyedropRecord> get records => _records;
   DateTime get selectedDate => _selectedDate;
   bool get isLoading => _isLoading;
+  bool get isTestMode => _isTestMode;
 
   EyedropRecord? get todayRecord {
     final today = AppDateUtils.formatDate(DateTime.now());
@@ -115,6 +117,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   void setTestMode() {
+    _isTestMode = true;
     _isLoading = false;
     _records = [];
     _selectedDate = DateTime.now();
@@ -150,8 +153,5 @@ class HomeProvider extends ChangeNotifier {
     }
     
     notifyListeners();
-    
-    final notificationService = NotificationService();
-    await notificationService.checkAndScheduleMissedNotification();
   }
 }
