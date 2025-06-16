@@ -89,6 +89,8 @@ class HomeProvider extends ChangeNotifier {
         final index = _records.indexWhere((record) => record.date == date);
         if (index != -1) {
           _records[index] = updatedRecord;
+        } else {
+          _records.add(updatedRecord);
         }
       } else {
         final newRecord = EyedropRecord(
