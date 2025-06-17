@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/constants/colors.dart';
+import '../core/utils/date_utils.dart';
 import '../features/home/screens/home_screen.dart';
 import '../features/home/providers/home_provider.dart';
 import '../features/pressure/screens/pressure_chart_screen.dart';
@@ -101,7 +102,7 @@ class _MainScreenState extends State<MainScreen> {
   void _toggleEyedropStatus() {
     final homeProvider = context.read<HomeProvider>();
     final selectedDate = homeProvider.selectedDate;
-    final dateString = selectedDate.toIso8601String().split('T')[0];
+    final dateString = AppDateUtils.formatDate(selectedDate);
     
     final wasCompleted = homeProvider.isDateCompleted(selectedDate);
     
