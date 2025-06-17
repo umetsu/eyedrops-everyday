@@ -104,64 +104,79 @@ class NotificationService {
   }
 
   Future<void> scheduleDailyReminder() async {
-    final settingsService = SettingsService();
-    final reminderTime = await settingsService.getDailyReminderTime();
+    try {
+      final settingsService = SettingsService();
+      final reminderTime = await settingsService.getDailyReminderTime();
 
-    await _flutterLocalNotificationsPlugin.zonedSchedule(
-      _dailyNotificationId,
-      '点眼の時間です',
-      '今日の点眼を忘れずに行いましょう',
-      _nextInstanceOfTime(reminderTime.hour, reminderTime.minute),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          _dailyReminderChannelId,
-          '点眼リマインダー',
-          channelDescription: '毎日の点眼を促す通知',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+      await _flutterLocalNotificationsPlugin.zonedSchedule(
+        _dailyNotificationId,
+        '点眼の時間です',
+        '今日の点眼を忘れずに行いましょう',
+        _nextInstanceOfTime(reminderTime.hour, reminderTime.minute),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            _dailyReminderChannelId,
+            '点眼リマインダー',
+            channelDescription: '毎日の点眼を促す通知',
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
         ),
-        iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+    } catch (e) {
+      // エラーが発生した場合は静かに失敗する
+    }
   }
 
   Future<void> scheduleMissedReminder() async {
-    final settingsService = SettingsService();
-    final missedTime = await settingsService.getMissedReminderTime();
+    try {
+      final settingsService = SettingsService();
+      final missedTime = await settingsService.getMissedReminderTime();
 
-    await _flutterLocalNotificationsPlugin.zonedSchedule(
-      _missedNotificationId,
-      '点眼を忘れていませんか？',
-      '昨日の点眼が記録されていません。忘れずに点眼を行いましょう',
-      _nextInstanceOfTime(missedTime.hour, missedTime.minute),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          _missedReminderChannelId,
-          '点眼忘れ通知',
-          channelDescription: '前日の点眼を忘れた場合の通知',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+      await _flutterLocalNotificationsPlugin.zonedSchedule(
+        _missedNotificationId,
+        '点眼を忘れていませんか？',
+        '昨日の点眼が記録されていません。忘れずに点眼を行いましょう',
+        _nextInstanceOfTime(missedTime.hour, missedTime.minute),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            _missedReminderChannelId,
+            '点眼忘れ通知',
+            channelDescription: '前日の点眼を忘れた場合の通知',
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
         ),
-        iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+    } catch (e) {
+      // エラーが発生した場合は静かに失敗する
+    }
   }
 
   Future<void> checkAndScheduleMissedNotification() async {
+    final settingsService = SettingsService();
+    final notificationsEnabled = await settingsService.getNotificationsEnabled();
+    
+    if (!notificationsEnabled) {
+      return;
+    }
+    
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
     final yesterdayString = AppDateUtils.formatDate(yesterday);
     
