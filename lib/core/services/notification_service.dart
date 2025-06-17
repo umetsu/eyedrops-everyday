@@ -45,11 +45,7 @@ class NotificationService {
     );
 
     await _createNotificationChannels();
-    final permissionGranted = await requestPermissions();
-    
-    if (kDebugMode) {
-      print('通知サービス初期化完了: 権限取得=${permissionGranted ? "成功" : "失敗"}');
-    }
+    await requestPermissions();
   }
 
   Future<void> _createNotificationChannels() async {
@@ -111,17 +107,12 @@ class NotificationService {
     try {
       final settingsService = SettingsService();
       final reminderTime = await settingsService.getDailyReminderTime();
-      final scheduledDateTime = _nextInstanceOfTime(reminderTime.hour, reminderTime.minute);
-      
-      if (kDebugMode) {
-        print('日次リマインダーをスケジュール: ${reminderTime.hour}:${reminderTime.minute} -> $scheduledDateTime');
-      }
 
       await _flutterLocalNotificationsPlugin.zonedSchedule(
         _dailyNotificationId,
         '点眼の時間です',
         '今日の点眼を忘れずに行いましょう',
-        scheduledDateTime,
+        _nextInstanceOfTime(reminderTime.hour, reminderTime.minute),
         const NotificationDetails(
           android: AndroidNotificationDetails(
             _dailyReminderChannelId,
@@ -140,14 +131,8 @@ class NotificationService {
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time,
       );
-      
-      if (kDebugMode) {
-        print('日次リマインダーのスケジュールが完了しました');
-      }
     } catch (e) {
-      if (kDebugMode) {
-        print('日次リマインダーのスケジュールでエラーが発生しました: $e');
-      }
+      // エラーが発生した場合は静かに失敗する
     }
   }
 
@@ -155,17 +140,12 @@ class NotificationService {
     try {
       final settingsService = SettingsService();
       final missedTime = await settingsService.getMissedReminderTime();
-      final scheduledDateTime = _nextInstanceOfTime(missedTime.hour, missedTime.minute);
-      
-      if (kDebugMode) {
-        print('忘れ通知をスケジュール: ${missedTime.hour}:${missedTime.minute} -> $scheduledDateTime');
-      }
 
       await _flutterLocalNotificationsPlugin.zonedSchedule(
         _missedNotificationId,
         '点眼を忘れていませんか？',
         '昨日の点眼が記録されていません。忘れずに点眼を行いましょう',
-        scheduledDateTime,
+        _nextInstanceOfTime(missedTime.hour, missedTime.minute),
         const NotificationDetails(
           android: AndroidNotificationDetails(
             _missedReminderChannelId,
@@ -184,14 +164,8 @@ class NotificationService {
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time,
       );
-      
-      if (kDebugMode) {
-        print('忘れ通知のスケジュールが完了しました');
-      }
     } catch (e) {
-      if (kDebugMode) {
-        print('忘れ通知のスケジュールでエラーが発生しました: $e');
-      }
+      // エラーが発生した場合は静かに失敗する
     }
   }
 
@@ -200,31 +174,18 @@ class NotificationService {
     final notificationsEnabled = await settingsService.getNotificationsEnabled();
     
     if (!notificationsEnabled) {
-      if (kDebugMode) {
-        print('通知が無効のため、忘れ通知をスキップします');
-      }
       return;
     }
     
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
     final yesterdayString = AppDateUtils.formatDate(yesterday);
     
-    if (kDebugMode) {
-      print('忘れ通知チェック開始: 前日=$yesterdayString');
-    }
-    
     final dbHelper = DatabaseHelper();
     final record = await dbHelper.getEyedropRecordByDate(yesterdayString);
     
     if (record == null || !record.completed) {
-      if (kDebugMode) {
-        print('前日の点眼記録が未完了のため、忘れ通知をスケジュールします');
-      }
       await scheduleMissedReminder();
     } else {
-      if (kDebugMode) {
-        print('前日の点眼記録が完了済みのため、忘れ通知をキャンセルします');
-      }
       await cancelMissedNotification();
     }
   }
