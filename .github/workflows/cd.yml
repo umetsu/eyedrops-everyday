@@ -38,14 +38,19 @@ jobs:
       - name: 🔧 Create google-services.json
         run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
 
-      - name: 🔐 Setup keystore
+      - name: 🔐 Setup keystore (if available)
         run: |
-          mkdir -p android/keystore
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/keystore/release.keystore
-          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=../keystore/release.keystore" >> android/key.properties
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            mkdir -p android/keystore
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/keystore/release.keystore
+            echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+            echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+            echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+            echo "storeFile=../keystore/release.keystore" >> android/key.properties
+            echo "✅ キーストア設定を復元しました"
+          else
+            echo "⚠️ キーストア情報が設定されていません。デバッグ署名を使用します。"
+          fi
 
       - name: 📥 Get dependencies
         run: flutter pub get
