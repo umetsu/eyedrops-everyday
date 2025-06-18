@@ -50,23 +50,23 @@ jobs:
       - name: 📥 Get dependencies
         run: flutter pub get
 
-      - name: 🏗️ Build APK (Staging)
-        run: flutter build apk --release --flavor staging
+      - name: 🏗️ Build APK (Production)
+        run: flutter build apk --release --flavor prod
 
       - name: 🚀 Distribute to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
-          file: build/app/outputs/flutter-apk/app-staging-release.apk
+          file: build/app/outputs/flutter-apk/app-prod-release.apk
           releaseNotes: |
-            毎日目薬アプリ - ステージング版自動ビルド
+            毎日目薬アプリ - 本番版自動ビルド
             
             ビルド情報:
             - ブランチ: ${{ github.ref_name }}
             - コミット: ${{ github.sha }}
             - 実行者: ${{ github.actor }}
-            - フレーバー: staging
-            - アプリケーションID: jp.umeg.eyedrops_everyday.staging
+            - フレーバー: prod
+            - アプリケーションID: jp.umeg.eyedrops_everyday
             
             注意: テスターグループは後でFirebase Consoleで設定してください
