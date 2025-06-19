@@ -40,14 +40,18 @@ jobs:
 
       - name: 🔐 Setup keystore (if available)
         run: |
-          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ] && [ "${{ secrets.KEYSTORE_BASE64 }}" != "" ]; then
+            echo "キーストア設定を復元中..."
             mkdir -p android/keystore
-            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/keystore/release.keystore
-            echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
-            echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
-            echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-            echo "storeFile=../keystore/release.keystore" >> android/key.properties
-            echo "✅ キーストア設定を復元しました"
+            if echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/keystore/release.keystore 2>/dev/null; then
+              echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+              echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+              echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+              echo "storeFile=../keystore/release.keystore" >> android/key.properties
+              echo "✅ キーストア設定を復元しました"
+            else
+              echo "⚠️ キーストアのBase64デコードに失敗しました。デバッグ署名を使用します。"
+            fi
           else
             echo "⚠️ キーストア情報が設定されていません。デバッグ署名を使用します。"
           fi
