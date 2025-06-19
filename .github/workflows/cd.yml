@@ -38,24 +38,45 @@ jobs:
       - name: 🔧 Create google-services.json
         run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
 
+      - name: 🔐 Setup keystore (if available)
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ] && [ "${{ secrets.KEYSTORE_BASE64 }}" != "" ]; then
+            echo "キーストア設定を復元中..."
+            mkdir -p android/keystore
+            if echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/keystore/release.keystore 2>/dev/null; then
+              echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+              echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+              echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+              echo "storeFile=../keystore/release.keystore" >> android/key.properties
+              echo "✅ キーストア設定を復元しました"
+            else
+              echo "⚠️ キーストアのBase64デコードに失敗しました。デバッグ署名を使用します。"
+            fi
+          else
+            echo "⚠️ キーストア情報が設定されていません。デバッグ署名を使用します。"
+          fi
+
       - name: 📥 Get dependencies
         run: flutter pub get
 
-      - name: 🏗️ Build APK
-        run: flutter build apk --release
+      - name: 🏗️ Build APK (Production)
+        run: flutter build apk --release --flavor prod
 
       - name: 🚀 Distribute to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
-          file: build/app/outputs/flutter-apk/app-release.apk
+          file: build/app/outputs/flutter-apk/app-prod-release.apk
+          testers: ${{ secrets.FIREBASE_TESTER_EMAILS }}
           releaseNotes: |
-            毎日目薬アプリ - 自動ビルド版
+            毎日目薬アプリ - 本番版自動ビルド
             
             ビルド情報:
             - ブランチ: ${{ github.ref_name }}
             - コミット: ${{ github.sha }}
             - 実行者: ${{ github.actor }}
+            - フレーバー: prod
+            - アプリケーションID: jp.umeg.eyedrops_everyday
             
-            注意: テスターグループは後でFirebase Consoleで設定してください
+            テスター: 自動招待済み
