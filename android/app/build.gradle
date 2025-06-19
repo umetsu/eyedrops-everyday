@@ -76,13 +76,6 @@ android {
             resValue "string", "app_name", "毎日目薬 (開発版)"
         }
         
-        staging {
-            dimension "environment"
-            applicationIdSuffix ".staging"
-            versionNameSuffix "-staging"
-            resValue "string", "app_name", "毎日目薬 (ステージング)"
-        }
-        
         prod {
             dimension "environment"
             resValue "string", "app_name", "毎日目薬"

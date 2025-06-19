@@ -42,9 +42,6 @@ storeFile=../keystore/release.keystore
 # 開発版（デバッグ署名）
 flutter build apk --release --flavor dev
 
-# ステージング版（リリース署名）
-flutter build apk --release --flavor staging
-
 # 本番版（リリース署名）
 flutter build apk --release --flavor prod
 ```
@@ -54,7 +51,6 @@ flutter build apk --release --flavor prod
 各フレーバーで以下のアプリケーションIDが生成されます：
 
 - 開発版: `jp.umeg.eyedrops_everyday.dev`
-- ステージング版: `jp.umeg.eyedrops_everyday.staging`
 - 本番版: `jp.umeg.eyedrops_everyday`
 
 ## 6. 注意事項

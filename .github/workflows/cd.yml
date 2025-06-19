@@ -64,6 +64,7 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
           file: build/app/outputs/flutter-apk/app-prod-release.apk
+          testers: ${{ secrets.FIREBASE_TESTER_EMAILS }}
           releaseNotes: |
             毎日目薬アプリ - 本番版自動ビルド
             
@@ -74,4 +75,4 @@ jobs:
             - フレーバー: prod
             - アプリケーションID: jp.umeg.eyedrops_everyday
             
-            注意: テスターグループは後でFirebase Consoleで設定してください
+            テスター: 自動招待済み
