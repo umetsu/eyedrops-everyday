@@ -5,70 +5,65 @@
 ```
 lib/
 ├── main.dart                 # アプリケーションエントリーポイント
-├── app.dart                  # アプリケーション設定
 ├── core/                     # コア機能
 │   ├── constants/
-│   │   ├── colors.dart       # カラーパレット定義
-│   │   ├── strings.dart      # 文字列定数
-│   │   └── dimensions.dart   # サイズ・余白定数
+│   │   └── colors.dart       # カラーパレット定義
 │   ├── database/
 │   │   ├── database_helper.dart  # SQLite操作
 │   │   └── models/
 │   │       ├── eyedrop_record.dart
-│   │       ├── pressure_record.dart
-│   │       └── app_settings.dart
+│   │       └── pressure_record.dart
 │   ├── services/
 │   │   ├── notification_service.dart  # 通知管理
-│   │   └── storage_service.dart       # データ永続化
+│   │   └── settings_service.dart      # 設定データ永続化
 │   └── utils/
-│       ├── date_utils.dart    # 日付操作ユーティリティ
-│       └── validators.dart    # バリデーション
+│       └── date_utils.dart    # 日付操作ユーティリティ
 ├── features/                 # 機能別モジュール
 │   ├── home/
 │   │   ├── screens/
 │   │   │   └── home_screen.dart
-│   │   ├── widgets/
-│   │   │   ├── daily_status_card.dart
-│   │   │   └── quick_action_button.dart
 │   │   └── providers/
 │   │       └── home_provider.dart
-│   ├── calendar/
-│   │   ├── screens/
-│   │   │   └── calendar_screen.dart
-│   │   ├── widgets/
-│   │   │   ├── calendar_widget.dart
-│   │   │   └── day_cell.dart
-│   │   └── providers/
-│   │       └── calendar_provider.dart
 │   ├── pressure/
 │   │   ├── screens/
 │   │   │   ├── pressure_input_screen.dart
 │   │   │   └── pressure_chart_screen.dart
-│   │   ├── widgets/
-│   │   │   ├── pressure_chart.dart
-│   │   │   └── pressure_input_form.dart
 │   │   └── providers/
 │   │       └── pressure_provider.dart
 │   └── settings/
 │       ├── screens/
 │       │   └── settings_screen.dart
-│       ├── widgets/
-│       │   ├── notification_setting.dart
-│       │   └── time_picker_tile.dart
 │       └── providers/
 │           └── settings_provider.dart
-├── shared/                   # 共通コンポーネント
-│   ├── widgets/
-│   │   ├── custom_app_bar.dart
-│   │   ├── custom_button.dart
-│   │   ├── custom_card.dart
-│   │   └── loading_indicator.dart
-│   └── themes/
-│       └── app_theme.dart
-└── navigation/
-    ├── app_router.dart       # ルーティング設定
-    └── bottom_navigation.dart
+├── screens/                  # メイン画面
+│   └── main_screen.dart      # ナビゲーション統合画面
+└── shared/                   # 共通コンポーネント
+    └── themes/
+        └── app_theme.dart
 ```
+
+## 実装済みコンポーネント
+
+### データレイヤー
+- **DatabaseHelper**: SQLite操作の中核クラス
+- **EyedropRecord**: 点眼記録データモデル
+- **PressureRecord**: 眼圧記録データモデル
+
+### サービスレイヤー
+- **NotificationService**: ローカル通知管理（定時・忘れ通知）
+- **SettingsService**: SharedPreferencesによる設定永続化
+
+### プロバイダー（状態管理）
+- **HomeProvider**: 点眼記録とカレンダー状態管理
+- **PressureProvider**: 眼圧データとグラフ状態管理
+- **SettingsProvider**: 通知設定と時刻管理
+
+### UI コンポーネント
+- **MainScreen**: BottomNavigationBarによる画面切替
+- **HomeScreen**: table_calendarによるカレンダー表示
+- **PressureChartScreen**: fl_chartによるグラフ表示
+- **PressureInputScreen**: 眼圧データ入力フォーム
+- **SettingsScreen**: 通知設定画面
 
 ## アーキテクチャパターン
 
@@ -211,13 +206,18 @@ dependencies:
   table_calendar: ^3.0.9    # カレンダーUI
   fl_chart: ^0.66.0         # グラフ表示
   shared_preferences: ^2.2.2  # 設定保存
-  intl: ^0.19.0             # 国際化・日付フォーマット
+  intl: ^0.20.2             # 国際化・日付フォーマット
+  timezone: ^0.10.1         # タイムゾーン管理
+  path: ^1.8.3              # パス操作
+  cupertino_icons: ^1.0.2   # iOS風アイコン
+  flutter_localizations:    # ローカライゼーション
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: ^5.4.4           # モック作成
-  build_runner: ^2.4.7     # コード生成
+  sqflite_common_ffi: ^2.3.0  # テスト用SQLite
+  flutter_lints: ^6.0.0    # Lint ルール
 ```
 
 ## ビルド・デプロイ
