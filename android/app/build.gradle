@@ -31,7 +31,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "jp.umeg.eyedrops_everyday"
+    namespace "dev.umeg.eyedrops_everyday"
     compileSdk 35
     ndkVersion "27.0.12077973"
 
@@ -59,7 +59,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "jp.umeg.eyedrops_everyday"
+        applicationId "dev.umeg.eyedrops_everyday"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

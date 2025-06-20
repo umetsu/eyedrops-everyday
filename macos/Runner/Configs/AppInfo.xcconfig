@@ -8,7 +8,7 @@
 PRODUCT_NAME = eyedrops_everyday
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.eyedropsEveryday
+PRODUCT_BUNDLE_IDENTIFIER = dev.umeg.eyedrops_everyday
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 dev.umeg. All rights reserved.
