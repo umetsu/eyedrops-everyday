@@ -77,6 +77,6 @@ jobs:
             - コミット: ${{ github.sha }}
             - 実行者: ${{ github.actor }}
             - フレーバー: prod
-            - アプリケーションID: jp.umeg.eyedrops_everyday
+            - アプリケーションID: dev.umeg.eyedrops_everyday
             
             テスター: 自動招待済み

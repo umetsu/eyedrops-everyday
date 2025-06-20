@@ -50,8 +50,8 @@ flutter build apk --release --flavor prod
 
 各フレーバーで以下のアプリケーションIDが生成されます：
 
-- 開発版: `jp.umeg.eyedrops_everyday.dev`
-- 本番版: `jp.umeg.eyedrops_everyday`
+- 開発版: `dev.umeg.eyedrops_everyday.dev`
+- 本番版: `dev.umeg.eyedrops_everyday`
 
 ## 6. 注意事項
 
