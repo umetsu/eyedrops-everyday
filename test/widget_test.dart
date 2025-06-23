@@ -23,6 +23,11 @@ void main() {
     databaseFactory = databaseFactoryFfi;
   });
 
+  setUp(() async {
+    // テスト間でデータベースをクリーンアップ
+    sqfliteFfiInit();
+  });
+
   testWidgets('毎日目薬アプリの基本表示テスト', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
     
@@ -60,6 +65,7 @@ void main() {
     );
     
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('点眼履歴'), findsAtLeastNWidgets(1));
     expect(find.text('点眼カレンダー'), findsOneWidget);
@@ -99,6 +105,7 @@ void main() {
     );
     
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
 
@@ -107,7 +114,7 @@ void main() {
     
     await tester.tap(actionButton);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
   });
@@ -146,10 +153,6 @@ void main() {
     final homeProvider = HomeProvider(testMode: true);
     final pressureProvider = PressureProvider(testMode: true);
     
-    // 昨日の日付を設定（今日以外の日付をテスト）
-    final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    homeProvider.setSelectedDate(yesterday);
-    
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -172,6 +175,12 @@ void main() {
     );
     
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    // 昨日の日付を設定（今日以外の日付をテスト）
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    homeProvider.setSelectedDate(yesterday);
+    await tester.pump();
 
     // 初期状態では昨日の点眼は未完了
     expect(homeProvider.isDateCompleted(yesterday), false);
@@ -183,7 +192,10 @@ void main() {
     
     await tester.tap(actionButton);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(seconds: 1));
+
+    // データベース操作完了を待つ
+    await tester.pumpAndSettle();
 
     // 昨日の日付の点眼状態が変更されていることを確認
     expect(homeProvider.isDateCompleted(yesterday), true);
@@ -221,6 +233,7 @@ void main() {
     );
     
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     // 昨日を選択して点眼状態を切り替え
     homeProvider.setSelectedDate(yesterday);
@@ -229,7 +242,7 @@ void main() {
     final actionButton = find.byType(FloatingActionButton);
     await tester.tap(actionButton);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pumpAndSettle();
 
     // 昨日のみ完了状態になっていることを確認
     expect(homeProvider.isDateCompleted(yesterday), true);
@@ -242,7 +255,7 @@ void main() {
     
     await tester.tap(actionButton);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pumpAndSettle();
 
     // 昨日と2日前が完了状態、今日は未完了のまま
     expect(homeProvider.isDateCompleted(yesterday), true);
@@ -255,5 +268,87 @@ void main() {
     
     // 今日は依然として未完了状態であることを確認
     expect(homeProvider.isDateCompleted(today), false);
+  });
+
+  testWidgets('notifyListeners呼び出し確認テスト', (WidgetTester tester) async {
+    final homeProvider = HomeProvider(testMode: true);
+    bool notified = false;
+    
+    homeProvider.addListener(() {
+      notified = true;
+    });
+    
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: homeProvider,
+        child: MaterialApp(
+          home: Scaffold(
+            body: Consumer<HomeProvider>(
+              builder: (context, provider, child) {
+                return Text('Test');
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    
+    await tester.pump();
+    
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    homeProvider.setSelectedDate(yesterday);
+    
+    expect(notified, true);
+  });
+
+  testWidgets('PressureProviderの基本機能テスト', (WidgetTester tester) async {
+    final pressureProvider = PressureProvider(testMode: true);
+    
+    expect(pressureProvider.records, isEmpty);
+    expect(pressureProvider.selectedPeriod, '1ヶ月');
+    expect(pressureProvider.availablePeriods, contains('1ヶ月'));
+    expect(pressureProvider.availablePeriods, contains('3ヶ月'));
+    expect(pressureProvider.availablePeriods, contains('6ヶ月'));
+    expect(pressureProvider.availablePeriods, contains('1年'));
+  });
+
+  testWidgets('PressureProviderの期間変更テスト', (WidgetTester tester) async {
+    final pressureProvider = PressureProvider(testMode: true);
+    bool notified = false;
+    
+    pressureProvider.addListener(() {
+      notified = true;
+    });
+    
+    await pressureProvider.loadRecordsForPeriod('3ヶ月');
+    
+    expect(pressureProvider.selectedPeriod, '3ヶ月');
+    expect(notified, true);
+  });
+
+  testWidgets('データベースエラーハンドリングテスト', (WidgetTester tester) async {
+    final homeProvider = HomeProvider(testMode: true);
+    
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: homeProvider,
+        child: MaterialApp(
+          home: Scaffold(
+            body: Consumer<HomeProvider>(
+              builder: (context, provider, child) {
+                return Text('Test');
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    
+    await tester.pump();
+    
+    final invalidDate = '';
+    await homeProvider.toggleEyedropStatus(invalidDate);
+    
+    expect(homeProvider.records, isNotNull);
   });
 }

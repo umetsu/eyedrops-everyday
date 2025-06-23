@@ -44,8 +44,9 @@ class PressureProvider extends ChangeNotifier {
   Future<void> loadRecordsForPeriod(String period) async {
     _selectedPeriod = period;
     
-    // Skip database operations in test mode
+    // Skip database operations in test mode but still notify listeners
     if (_testMode) {
+      notifyListeners();
       return;
     }
     
@@ -133,11 +134,5 @@ class PressureProvider extends ChangeNotifier {
     return _records.where((record) => record.eyeType == eyeType).toList();
   }
 
-  void setTestMode() {
-    _testMode = true;
-    _isLoading = false;
-    _records = [];
-    _selectedPeriod = '1ヶ月';
-    notifyListeners();
-  }
+
 }
