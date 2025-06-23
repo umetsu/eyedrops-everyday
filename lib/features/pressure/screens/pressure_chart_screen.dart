@@ -17,10 +17,7 @@ class _PressureChartScreenState extends State<PressureChartScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<PressureProvider>();
-      // Only load records if not in test mode (records list is empty and not loading)
-      if (provider.records.isEmpty && !provider.isLoading) {
-        provider.loadRecordsForPeriod(provider.selectedPeriod);
-      }
+      provider.loadRecordsForPeriod(provider.selectedPeriod);
     });
   }
 
