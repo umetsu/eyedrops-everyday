@@ -12,6 +12,15 @@ class HomeProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isTestMode = false;
 
+  HomeProvider({bool testMode = false}) {
+    _isTestMode = testMode;
+    if (!_isTestMode) {
+      loadRecords();
+    } else {
+      _isLoading = false;
+    }
+  }
+
   List<EyedropRecord> get records => _records;
   DateTime get selectedDate => _selectedDate;
   bool get isLoading => _isLoading;
@@ -43,6 +52,11 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> loadRecords() async {
+    // Skip database operations in test mode
+    if (_isTestMode) {
+      return;
+    }
+    
     _isLoading = true;
     notifyListeners();
 
@@ -58,6 +72,11 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> loadRecordsForMonth(DateTime month) async {
+    // Skip database operations in test mode
+    if (_isTestMode) {
+      return;
+    }
+    
     _isLoading = true;
     notifyListeners();
 

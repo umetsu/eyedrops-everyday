@@ -35,10 +35,8 @@ void main() {
   });
 
   testWidgets('画面内のUI要素が正しく表示されるテスト', (WidgetTester tester) async {
-    final homeProvider = HomeProvider();
-    homeProvider.setTestMode();
-    final pressureProvider = PressureProvider();
-    pressureProvider.setTestMode();
+    final homeProvider = HomeProvider(testMode: true);
+    final pressureProvider = PressureProvider(testMode: true);
     
     await tester.pumpWidget(
       MultiProvider(
@@ -76,10 +74,8 @@ void main() {
   });
 
   testWidgets('点眼状態の切り替え機能テスト', (WidgetTester tester) async {
-    final homeProvider = HomeProvider();
-    homeProvider.setTestMode();
-    final pressureProvider = PressureProvider();
-    pressureProvider.setTestMode();
+    final homeProvider = HomeProvider(testMode: true);
+    final pressureProvider = PressureProvider(testMode: true);
     
     await tester.pumpWidget(
       MultiProvider(
@@ -117,10 +113,8 @@ void main() {
   });
 
   testWidgets('カレンダーの日付選択機能テスト', (WidgetTester tester) async {
-    final homeProvider = HomeProvider();
-    homeProvider.setTestMode();
-    final pressureProvider = PressureProvider();
-    pressureProvider.setTestMode();
+    final homeProvider = HomeProvider(testMode: true);
+    final pressureProvider = PressureProvider(testMode: true);
     
     await tester.pumpWidget(
       MultiProvider(
@@ -149,10 +143,8 @@ void main() {
   });
 
   testWidgets('選択した日付に対する点眼状態切り替えテスト（デグレード防止）', (WidgetTester tester) async {
-    final homeProvider = HomeProvider();
-    homeProvider.setTestMode();
-    final pressureProvider = PressureProvider();
-    pressureProvider.setTestMode();
+    final homeProvider = HomeProvider(testMode: true);
+    final pressureProvider = PressureProvider(testMode: true);
     
     // 昨日の日付を設定（今日以外の日付をテスト）
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
@@ -200,10 +192,8 @@ void main() {
   });
 
   testWidgets('異なる日付選択時の点眼状態独立性テスト', (WidgetTester tester) async {
-    final homeProvider = HomeProvider();
-    homeProvider.setTestMode();
-    final pressureProvider = PressureProvider();
-    pressureProvider.setTestMode();
+    final homeProvider = HomeProvider(testMode: true);
+    final pressureProvider = PressureProvider(testMode: true);
     
     final today = DateTime.now();
     final yesterday = today.subtract(const Duration(days: 1));

@@ -11,6 +11,15 @@ class PressureProvider extends ChangeNotifier {
   String _selectedPeriod = '1ヶ月';
   bool _testMode = false;
 
+  PressureProvider({bool testMode = false}) {
+    _testMode = testMode;
+    if (!_testMode) {
+      loadRecordsForPeriod(_selectedPeriod);
+    } else {
+      _isLoading = false;
+    }
+  }
+
   List<PressureRecord> get records => _records;
   bool get isLoading => _isLoading;
   String get selectedPeriod => _selectedPeriod;

@@ -26,9 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<HomeProvider>();
-      if (provider.isLoading) {
-        provider.loadRecords();
-      }
+      provider.loadRecordsForMonth(_focusedDay);
     });
   }
 
