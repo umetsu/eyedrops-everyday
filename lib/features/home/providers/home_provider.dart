@@ -93,6 +93,10 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> toggleEyedropStatus(String date) async {
+    if (_isTestMode) {
+      return toggleEyedropStatusForTest(date);
+    }
+    
     try {
       final existingRecord = await _databaseHelper.getEyedropRecordByDate(date);
       final now = DateTime.now();
@@ -132,24 +136,6 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  void setSelectedDate(DateTime date) {
-    _selectedDate = date;
-    notifyListeners();
-  }
-
-  void setTestMode() {
-    _isTestMode = true;
-    _isLoading = false;
-    _records = [];
-    _selectedDate = DateTime.now();
-    notifyListeners();
-  }
-
-  void forceNotLoading() {
-    _isLoading = false;
-    notifyListeners();
-  }
-
   Future<void> toggleEyedropStatusForTest(String date) async {
     final existingRecordIndex = _records.indexWhere((record) => record.date == date);
     final now = DateTime.now();
@@ -175,4 +161,11 @@ class HomeProvider extends ChangeNotifier {
     
     notifyListeners();
   }
+
+  void setSelectedDate(DateTime date) {
+    _selectedDate = date;
+    notifyListeners();
+  }
+
+
 }
