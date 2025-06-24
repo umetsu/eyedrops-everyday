@@ -6,6 +6,7 @@ class SettingsService {
   static const String _missedReminderHourKey = 'missed_reminder_hour';
   static const String _missedReminderMinuteKey = 'missed_reminder_minute';
   static const String _notificationsEnabledKey = 'notifications_enabled';
+  static const String _notificationPermissionRequestedKey = 'notification_permission_requested';
 
   static const int _defaultDailyHour = 21;
   static const int _defaultDailyMinute = 0;
@@ -50,5 +51,15 @@ class SettingsService {
   Future<void> setNotificationsEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_notificationsEnabledKey, enabled);
+  }
+
+  Future<bool> getNotificationPermissionRequested() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_notificationPermissionRequestedKey) ?? false;
+  }
+
+  Future<void> setNotificationPermissionRequested(bool requested) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_notificationPermissionRequestedKey, requested);
   }
 }
