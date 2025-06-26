@@ -45,7 +45,7 @@ class NotificationService {
     );
 
     await _createNotificationChannels();
-    await requestPermissions();
+    await requestPermissionsIfNeeded();
   }
 
   Future<void> _createNotificationChannels() async {
@@ -101,6 +101,22 @@ class NotificationService {
     }
 
     return false;
+  }
+
+  Future<bool> requestPermissionsIfNeeded() async {
+    final settingsService = SettingsService();
+    final alreadyRequested = await settingsService.getNotificationPermissionRequested();
+    
+    if (alreadyRequested) {
+      return true;
+    }
+    
+    final granted = await requestPermissions();
+    if (granted) {
+      await settingsService.setNotificationPermissionRequested(true);
+    }
+    
+    return granted;
   }
 
   Future<void> scheduleDailyReminder() async {
