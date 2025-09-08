@@ -56,7 +56,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onChanged: (value) {
                           provider.setNotificationsEnabled(value);
                         },
-                        activeColor: AppColors.primary,
+                        thumbColor: WidgetStateProperty.resolveWith<Color?>(
+                          (Set<WidgetState> states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return AppColors.primary;
+                            }
+                            return null;
+                          },
+                        ),
                       ),
                     ],
                   ),
