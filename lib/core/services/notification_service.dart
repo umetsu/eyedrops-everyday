@@ -7,6 +7,15 @@ import '../database/models/eyedrop_record.dart';
 import '../utils/date_utils.dart';
 import 'settings_service.dart';
 
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) async {
+  if (kDebugMode) {
+    print('背景通知アクション受信: ${notificationResponse.payload}');
+    print('背景アクションID: ${notificationResponse.actionId}');
+  }
+  await NotificationService().handleActionResponse(notificationResponse, isBackground: true);
+}
+
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
@@ -43,6 +52,7 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
     await _createNotificationChannels();
@@ -261,10 +271,37 @@ class NotificationService {
       print('通知がタップされました: ${notificationResponse.payload}');
       print('アクションID: ${notificationResponse.actionId}');
     }
-    
-    if (notificationResponse.actionId == 'mark_completed') {
-      final targetDate = notificationResponse.payload ?? AppDateUtils.formatDate(DateTime.now());
-      await _markDateAsCompleted(targetDate);
+    await handleActionResponse(notificationResponse, isBackground: false);
+  }
+
+  Future<void> handleActionResponse(NotificationResponse notificationResponse, {bool isBackground = false}) async {
+    try {
+      if (notificationResponse.actionId == 'mark_completed') {
+        final String targetDate = notificationResponse.payload ?? AppDateUtils.formatDate(DateTime.now());
+        await _markDateAsCompleted(targetDate);
+
+        final androidImpl = _flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+
+        final active = await androidImpl?.getActiveNotifications();
+        final int? responseId = notificationResponse.id;
+        if (responseId != null) {
+          await _flutterLocalNotificationsPlugin.cancel(responseId);
+        } else if (active != null && active.isNotEmpty) {
+          for (final n in active) {
+            if (n.id != null && (n.id == _dailyNotificationId || n.id == _missedNotificationId)) {
+              await _flutterLocalNotificationsPlugin.cancel(n.id!);
+            }
+          }
+        }
+
+        await scheduleDailyReminder();
+        await checkAndScheduleMissedNotification();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('通知アクション処理エラー: $e');
+      }
     }
   }
 
