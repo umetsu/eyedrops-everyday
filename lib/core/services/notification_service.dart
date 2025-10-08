@@ -9,11 +9,19 @@ import 'settings_service.dart';
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) async {
-  if (kDebugMode) {
-    print('バックグラウンド通知アクション受信: ${notificationResponse.payload}');
-    print('バックグラウンドアクションID: ${notificationResponse.actionId}');
+  print('[DEBUG] ===== バックグラウンド通知アクション開始 =====');
+  print('[DEBUG] Payload: ${notificationResponse.payload}');
+  print('[DEBUG] ActionID: ${notificationResponse.actionId}');
+  print('[DEBUG] ID: ${notificationResponse.id}');
+  
+  try {
+    await NotificationService().handleActionResponse(notificationResponse, isBackground: true);
+    print('[DEBUG] ===== バックグラウンド通知アクション完了 =====');
+  } catch (e, stackTrace) {
+    print('[DEBUG] ===== バックグラウンド通知アクションエラー =====');
+    print('[DEBUG] エラー: $e');
+    print('[DEBUG] スタックトレース: $stackTrace');
   }
-  await NotificationService().handleActionResponse(notificationResponse, isBackground: true);
 }
 
 class NotificationService {
@@ -267,60 +275,99 @@ class NotificationService {
   }
 
   void _onNotificationTapped(NotificationResponse notificationResponse) async {
-    if (kDebugMode) {
-      print('通知がタップされました: ${notificationResponse.payload}');
-      print('アクションID: ${notificationResponse.actionId}');
-    }
+    print('[DEBUG] ===== フォアグラウンド通知タップ =====');
+    print('[DEBUG] Payload: ${notificationResponse.payload}');
+    print('[DEBUG] ActionID: ${notificationResponse.actionId}');
+    print('[DEBUG] ID: ${notificationResponse.id}');
+    
     await handleActionResponse(notificationResponse, isBackground: false);
   }
 
   Future<void> handleActionResponse(NotificationResponse notificationResponse, {bool isBackground = false}) async {
+    print('[DEBUG] handleActionResponse開始 (isBackground: $isBackground)');
+    
     try {
+      print('[DEBUG] ActionID確認: ${notificationResponse.actionId}');
+      
       if (notificationResponse.actionId == 'mark_completed') {
+        print('[DEBUG] mark_completedアクション検出');
+        
         final String targetDate = notificationResponse.payload ?? AppDateUtils.formatDate(DateTime.now());
+        print('[DEBUG] 対象日付: $targetDate');
+        
+        print('[DEBUG] _markDateAsCompleted呼び出し前');
         await _markDateAsCompleted(targetDate);
+        print('[DEBUG] _markDateAsCompleted呼び出し後');
 
+        print('[DEBUG] 通知削除処理開始');
         final androidImpl = _flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
         final active = await androidImpl?.getActiveNotifications();
+        print('[DEBUG] アクティブ通知数: ${active?.length ?? 0}');
+        
         final int? responseId = notificationResponse.id;
         if (responseId != null) {
+          print('[DEBUG] 通知ID ${responseId} をキャンセル');
           await _flutterLocalNotificationsPlugin.cancel(responseId);
         } else if (active != null && active.isNotEmpty) {
+          print('[DEBUG] アクティブ通知からキャンセル');
           for (final n in active) {
             if (n.id != null && (n.id == _dailyNotificationId || n.id == _missedNotificationId)) {
+              print('[DEBUG] 通知ID ${n.id} をキャンセル');
               await _flutterLocalNotificationsPlugin.cancel(n.id!);
             }
           }
         }
 
+        print('[DEBUG] 通知再スケジュール開始');
         await scheduleDailyReminder();
         await checkAndScheduleMissedNotification();
+        print('[DEBUG] 通知再スケジュール完了');
+      } else {
+        print('[DEBUG] 未知のアクションID: ${notificationResponse.actionId}');
       }
-    } catch (e) {
-      if (kDebugMode) {
-        print('通知アクション処理エラー: $e');
-      }
+    } catch (e, stackTrace) {
+      print('[DEBUG] handleActionResponseエラー: $e');
+      print('[DEBUG] スタックトレース: $stackTrace');
     }
+    
+    print('[DEBUG] handleActionResponse完了');
   }
 
   Future<void> _markDateAsCompleted(String date) async {
+    print('[DEBUG] _markDateAsCompleted開始 (date: $date)');
+    
     try {
+      print('[DEBUG] DatabaseHelper初期化');
       final databaseHelper = DatabaseHelper();
+      
+      print('[DEBUG] 既存レコード取得開始');
       final existingRecord = await databaseHelper.getEyedropRecordByDate(date);
+      print('[DEBUG] 既存レコード: ${existingRecord != null ? "存在" : "なし"}');
+      
       final now = DateTime.now();
+      print('[DEBUG] 現在時刻: $now');
       
       if (existingRecord != null) {
+        print('[DEBUG] 既存レコード更新処理');
+        print('[DEBUG] 既存レコードの完了状態: ${existingRecord.completed}');
+        
         if (!existingRecord.completed) {
+          print('[DEBUG] 未完了レコードを完了に更新');
           final updatedRecord = existingRecord.copyWith(
             completed: true,
             completedAt: AppDateUtils.formatDateTime(now),
             updatedAt: AppDateUtils.formatDateTime(now),
           );
+          print('[DEBUG] データベース更新実行');
           await databaseHelper.updateEyedropRecord(updatedRecord);
+          print('[DEBUG] データベース更新完了');
+        } else {
+          print('[DEBUG] 既に完了済みのため更新スキップ');
         }
       } else {
+        print('[DEBUG] 新規レコード作成処理');
         final newRecord = EyedropRecord(
           date: date,
           completed: true,
@@ -328,14 +375,19 @@ class NotificationService {
           createdAt: AppDateUtils.formatDateTime(now),
           updatedAt: AppDateUtils.formatDateTime(now),
         );
+        print('[DEBUG] データベース挿入実行');
         await databaseHelper.insertEyedropRecord(newRecord);
+        print('[DEBUG] データベース挿入完了');
       }
       
+      print('[DEBUG] 忘れ通知チェック開始');
       await checkAndScheduleMissedNotification();
-    } catch (e) {
-      if (kDebugMode) {
-        print('通知アクションでの点眼記録エラー: $e');
-      }
+      print('[DEBUG] 忘れ通知チェック完了');
+    } catch (e, stackTrace) {
+      print('[DEBUG] _markDateAsCompletedエラー: $e');
+      print('[DEBUG] スタックトレース: $stackTrace');
     }
+    
+    print('[DEBUG] _markDateAsCompleted完了');
   }
 }
