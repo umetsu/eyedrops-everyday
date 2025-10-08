@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -308,7 +307,7 @@ class NotificationService {
         
         final int? responseId = notificationResponse.id;
         if (responseId != null) {
-          print('[DEBUG] 通知ID ${responseId} をキャンセル');
+          print('[DEBUG] 通知ID $responseId をキャンセル');
           await _flutterLocalNotificationsPlugin.cancel(responseId);
         } else if (active != null && active.isNotEmpty) {
           print('[DEBUG] アクティブ通知からキャンセル');
