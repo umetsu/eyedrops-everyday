@@ -56,7 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onChanged: (value) {
                           provider.setNotificationsEnabled(value);
                         },
-                        activeColor: AppColors.primary,
+                        activeThumbColor: AppColors.primary,
                       ),
                     ],
                   ),
